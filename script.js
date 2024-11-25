@@ -14,37 +14,47 @@ const ws = new WebSocket('wss://server-14eb.onrender.com/');
 ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
-    if (data.startTime) {
+    if (data.type === 'start' && data.startTime) {
         startTime = data.startTime;
         isRunning = true;
         runTimer();
     }
 
-    if (data.reset) {
+    if (data.type === 'stop') {
         clearInterval(timer);
+        isRunning = false;
+    }
+
+    if (data.type === 'reset') {
+        clearInterval(timer);  // Stop the timer
         startTime = null;
         elapsedTime = 0;
         isRunning = false;
-        display.textContent = formatTime(0, 0); // Reset display to 00:00.00
+        display.textContent = formatTime(0, 0);  // Reset the display to 00:00.00
     }
 };
 
+// Start button functionality
 startBtn.addEventListener('click', () => {
     if (!isRunning) {
         ws.send(JSON.stringify({ type: 'start' }));
     }
 });
 
+// Stop button functionality
 stopBtn.addEventListener('click', () => {
     clearInterval(timer);
     isRunning = false;
     elapsedTime = Date.now() - startTime;
+    ws.send(JSON.stringify({ type: 'stop' }));
 });
 
+// Reset button functionality
 resetBtn.addEventListener('click', () => {
     ws.send(JSON.stringify({ type: 'reset' }));
 });
 
+// Function to run the timer
 function runTimer() {
     clearInterval(timer);
     timer = setInterval(() => {
@@ -56,6 +66,7 @@ function runTimer() {
     }, 10);
 }
 
+// Format time for display
 function formatTime(seconds, milliseconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -64,6 +75,7 @@ function formatTime(seconds, milliseconds) {
     return `${pad(hours)}:${pad(minutes)}:${pad(secs)}.${pad(ms, 2)}`;
 }
 
+// Pad single digit numbers with leading zeroes
 function pad(num, size = 2) {
     return num.toString().padStart(size, '0');
 }
