@@ -16,6 +16,14 @@ body {
 
 .container {
     text-align: center;
+    padding: 20px;
+}
+
+.header-image {
+    max-width: 100%;       /* Ensures the image scales responsively */
+    height: auto;          /* Maintains aspect ratio */
+    max-height: 150px;     /* Limits the height of the image */
+    margin-bottom: 20px;   /* Adds space below the image */
 }
 
 #display {
