@@ -20,17 +20,19 @@ ws.onmessage = (event) => {
         runTimer();
     }
 
-    if (data.type === 'stop') {
+    if (data.type === 'stop' && data.stopTime !== undefined) {
         clearInterval(timer);
         isRunning = false;
+        elapsedTime = data.stopTime;
+        display.textContent = formatTime(Math.floor(elapsedTime / 1000), elapsedTime % 1000);
     }
 
     if (data.type === 'reset') {
-        clearInterval(timer);  // Stop the timer
+        clearInterval(timer);
         startTime = null;
         elapsedTime = 0;
         isRunning = false;
-        display.textContent = formatTime(0, 0);  // Reset the display to 00:00.00
+        display.textContent = formatTime(0, 0);
     }
 };
 
@@ -45,8 +47,7 @@ startBtn.addEventListener('click', () => {
 stopBtn.addEventListener('click', () => {
     clearInterval(timer);
     isRunning = false;
-    elapsedTime = Date.now() - startTime;
-    ws.send(JSON.stringify({ type: 'stop' }));
+    ws.send(JSON.stringify({ type: 'stop' }));  // Notify the server to stop the timer
 });
 
 // Reset button functionality
