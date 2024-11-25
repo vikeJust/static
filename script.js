@@ -25,7 +25,7 @@ ws.onmessage = (event) => {
         startTime = null;
         elapsedTime = 0;
         isRunning = false;
-        display.textContent = formatTime(0, 0);
+        display.textContent = formatTime(0, 0); // Reset display to 00:00.00
     }
 };
 
